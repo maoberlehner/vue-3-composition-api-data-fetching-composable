@@ -12,9 +12,19 @@ export const STATE = {
 
 const cache = new LRU({ max: 256 });
 
-export function useSwrCache(parameter, callback) {
+const DEFAULT_OPTIONS = {
+  dedupingInterval: 2000,
+};
+
+export function useSwrCache(parameter, callback, customOptions) {
+  const options = {
+    ...DEFAULT_OPTIONS,
+    ...customOptions,
+  };
+
   const parameters = asArray(parameter);
   const cacheKey = JSON.stringify(parameters);
+  const cacheKeyDedupe = `${cacheKey}_dedupe`;
   const response = reactive({
     data: null,
     error: null,
@@ -25,12 +35,19 @@ export function useSwrCache(parameter, callback) {
   const load = async () => {
     try {
       const cachedData = cache.get(cacheKey) || null;
+      const dedupe = cache.get(cacheKeyDedupe) || false;
 
       response.state = cachedData ? STATE.revalidating : STATE.loading;
       response.data = await cachedData;
 
+      if (dedupe) {
+        response.state = STATE.idle;
+        return;
+      }
+
       const promise = callback(...parameters);
       cache.set(cacheKey, promise);
+      cache.set(cacheKeyDedupe, true, options.dedupingInterval);
 
       response.data = await promise;
       response.state = STATE.idle;
