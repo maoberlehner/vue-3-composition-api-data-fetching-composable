@@ -3,17 +3,17 @@ import LRU from 'lru-cache';
 
 import { asArray } from '../utils/as-array';
 
+const CACHE = new LRU({ max: 256 });
+
+const DEFAULT_OPTIONS = {
+  dedupingInterval: 2000,
+};
+
 export const STATE = {
   error: Symbol(`error`),
   idle: Symbol(`idle`),
   loading: Symbol(`loading`),
   revalidating: Symbol(`revalidating`),
-};
-
-const cache = new LRU({ max: 256 });
-
-const DEFAULT_OPTIONS = {
-  dedupingInterval: 2000,
 };
 
 export function useSwrCache(parameter, callback, customOptions) {
@@ -34,8 +34,8 @@ export function useSwrCache(parameter, callback, customOptions) {
 
   const load = async () => {
     try {
-      const cachedData = cache.get(cacheKey) || null;
-      const dedupe = cache.get(cacheKeyDedupe) || false;
+      const cachedData = CACHE.get(cacheKey) || null;
+      const dedupe = CACHE.get(cacheKeyDedupe) || false;
 
       response.state = cachedData ? STATE.revalidating : STATE.loading;
       response.data = await cachedData;
@@ -46,8 +46,8 @@ export function useSwrCache(parameter, callback, customOptions) {
       }
 
       const promise = callback(...parameters);
-      cache.set(cacheKey, promise);
-      cache.set(cacheKeyDedupe, true, options.dedupingInterval);
+      CACHE.set(cacheKey, promise);
+      CACHE.set(cacheKeyDedupe, true, options.dedupingInterval);
 
       response.data = await promise;
       response.state = STATE.idle;
