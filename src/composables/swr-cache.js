@@ -68,7 +68,7 @@ export function useSwrCache(parameter, callback, customOptions) {
       const dedupe = CACHE.get(cacheKeyDedupe) || false;
 
       response.state = cachedData ? STATE.revalidating : STATE.loading;
-      response.data = await cachedData;
+      (async () => { response.data = await cachedData; })();
 
       if (dedupe) {
         response.state = STATE.idle;
