@@ -24,13 +24,16 @@ export function useSwrCache(parameter, callback) {
 
   const load = async () => {
     try {
-      const cachedData = cache.get(cacheKey);
-      response.state = cachedData ? STATE.revalidating : STATE.loading;
-      response.data = cachedData || null;
-      response.data = await callback(...parameters);
-      response.state = STATE.idle;
+      const cachedData = cache.get(cacheKey) || null;
 
-      cache.set(cacheKey, response.data);
+      response.state = cachedData ? STATE.revalidating : STATE.loading;
+      response.data = await cachedData;
+
+      const promise = callback(...parameters);
+      cache.set(cacheKey, promise);
+
+      response.data = await promise;
+      response.state = STATE.idle;
     } catch (error) {
       console.error(error);
       response.error = error;
