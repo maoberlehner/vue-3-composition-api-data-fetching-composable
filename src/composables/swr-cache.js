@@ -51,35 +51,28 @@ export function useSwrCache(parameter, callback, customOptions) {
   const parameters = asArray(parameter);
   const cacheKey = JSON.stringify(parameters);
   const cacheKeyDedupe = `${cacheKey}_dedupe`;
+  const cachedResponse = CACHE.get(cacheKey);
 
   /**
    * @type SwrCacheResponse
    */
-  const response = reactive({
+  const response = cachedResponse || reactive({
     data: null,
     error: null,
     reload: undefined,
     state: undefined,
   });
 
+  if (!cachedResponse) CACHE.set(cacheKey, response);
+
   const load = async () => {
     try {
-      const cachedData = CACHE.get(cacheKey) || null;
-      const dedupe = CACHE.get(cacheKeyDedupe) || false;
+      if (CACHE.get(cacheKeyDedupe)) return;
 
-      response.state = cachedData ? STATE.revalidating : STATE.loading;
-      (async () => { response.data = await cachedData; })();
-
-      if (dedupe) {
-        response.state = STATE.idle;
-        return;
-      }
-
-      const promise = callback(...parameters);
-      CACHE.set(cacheKey, promise);
       CACHE.set(cacheKeyDedupe, true, options.dedupingInterval);
 
-      response.data = await promise;
+      response.state = cachedResponse ? STATE.revalidating : STATE.loading;
+      response.data = await callback(...parameters);
       response.state = STATE.idle;
     } catch (error) {
       console.error(error);
