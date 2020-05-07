@@ -1,4 +1,4 @@
-import { reactive, toRefs } from 'vue';
+import { reactive, readonly, toRefs } from 'vue';
 import LRU from 'lru-cache';
 
 import { asArray } from '../utils/as-array';
@@ -84,5 +84,5 @@ export function useSwrCache(parameter, callback, customOptions) {
   response.reload = load;
   load();
 
-  return toRefs(response);
+  return toRefs(readonly(response));
 }
