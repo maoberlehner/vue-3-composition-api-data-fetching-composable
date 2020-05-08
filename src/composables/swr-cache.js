@@ -49,7 +49,7 @@ export function useSwrCache(parameter, callback, customOptions) {
   };
 
   const parameters = asArray(parameter);
-  const cacheKey = JSON.stringify(parameters);
+  const cacheKey = `${JSON.stringify(parameters)}${callback.toString()}`;
   const cacheKeyDedupe = `${cacheKey}_dedupe`;
   const cachedResponse = CACHE.get(cacheKey);
 
