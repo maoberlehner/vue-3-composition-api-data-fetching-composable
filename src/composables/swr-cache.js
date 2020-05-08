@@ -3,7 +3,7 @@ import LRU from 'lru-cache';
 
 import { asArray } from '../utils/as-array';
 
-const CACHE = new LRU({ max: 256 });
+const CACHE = new LRU({ max: 1024 });
 
 /**
  * @typedef {Object} SwrCacheOptions
