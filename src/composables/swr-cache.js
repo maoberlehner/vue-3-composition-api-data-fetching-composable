@@ -69,11 +69,11 @@ export function useSwrCache(parameter, callback, customOptions) {
     try {
       if (CACHE.get(cacheKeyDedupe)) return;
 
-      CACHE.set(cacheKeyDedupe, true, options.dedupingInterval);
-
       response.state = response.data ? STATE.revalidating : STATE.loading;
       response.data = await callback(...parameters);
       response.state = STATE.idle;
+
+      CACHE.set(cacheKeyDedupe, true, options.dedupingInterval);
     } catch (error) {
       console.error(error);
       response.error = error;
