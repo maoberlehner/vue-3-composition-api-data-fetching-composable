@@ -70,7 +70,7 @@ export function useSwrCache(parameter, callback, customOptions) {
       if (CACHE.get(cacheKeyDedupe)) return;
 
       response.state = response.data ? STATE.revalidating : STATE.loading;
-      response.data = await callback(...parameters);
+      response.data = Object.freeze(await callback(...parameters));
       response.state = STATE.idle;
 
       CACHE.set(cacheKeyDedupe, true, options.dedupingInterval);
