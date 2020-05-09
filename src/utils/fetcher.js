@@ -21,8 +21,10 @@ const responses = [
   },
 ];
 
-export const fetcher = () => new Promise((resolve) => {
+export const fetcher = endpoint => new Promise((resolve) => {
+  console.log(`Fetch: ${endpoint}`);
   setTimeout(() => {
+    console.log(`Respond:`, responses[count]);
     resolve(responses[count]);
     if (count === 2) {
       count = 0;
