@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class="m-6 max-w-4xl mx-auto"
+    class="m-6 max-w-2xl mx-auto"
   >
     <UserAvatar/>
     <UserProfile class="mt-12"/>
