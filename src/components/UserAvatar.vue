@@ -36,7 +36,7 @@ export default {
       data: user,
       error,
       state,
-    } = useSwrCache(`https://jsonplaceholder.typicode.com/users/1`, fetcher);
+    } = useSwrCache(`/users/1`, fetcher);
 
     return {
       STATE,
