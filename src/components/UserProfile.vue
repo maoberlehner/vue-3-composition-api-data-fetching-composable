@@ -5,24 +5,12 @@
       class="bg-white shadow overflow-hidden sm:rounded-lg"
     >
       <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
-              Profile
-            </h3>
-            <p class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
-              Personal details.
-            </p>
-          </div>
-          <button
-            :disabled="state === STATE.revalidating"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out"
-            :class="state === STATE.revalidating && `opacity-25`"
-            @click="reload"
-          >
-            {{ state === STATE.revalidating ? `Revalidating ...` : `Load new data` }}
-          </button>
-        </div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+          Profile
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+          Personal details.
+        </p>
       </div>
       <div>
         <dl>
@@ -80,14 +68,12 @@ export default {
     const {
       data: user,
       error,
-      reload,
       state,
     } = useSwrCache(`/users/1`, fetcher);
 
     return {
       STATE,
       error,
-      reload,
       state,
       user,
     };
